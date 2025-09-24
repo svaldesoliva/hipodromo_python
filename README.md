@@ -1,41 +1,67 @@
-# Hippodrome (Horse Racing) in Python 🐎
+# Hipodromo 🐎
 
-Simple terminal horse racing betting game with color output and a language selector (English/Español). Settings now use a single config file at `~/.config/hipodromo/config.json`.
+A fun terminal horse racing betting game. Place bets, watch horses race, and see if you can win some money. Simple, colorful, and addictive.
 
-New in v0.3:
-- Odds per horse with fair-ish payouts (house edge ~10%).
-- Fast mode toggle and CLI flags.
-- Seeded runs and configurable number of horses.
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-<details>
-<summary><strong>English</strong></summary>
 
-#### Installation
-- Via pipx (recommended) — see `pipx` docs: [pipx documentation](https://pypa.github.io/pipx/)
+## Features
+
+- 🏁 **Horse Racing**: Watch animated horses race with different odds
+- 💰 **Betting**: Place bets and win (or lose) money
+- 🌍 **Two Languages**: English and Spanish
+- ⚡ **Fast Mode**: Skip the slow animations
+- 🎲 **Seeded Races**: Use the same seed to get the same race
+- 🎨 **Colorful Terminal**: Horse emojis and colored text
+- ⚙️ **Configurable**: Change number of horses, language, etc.
+- 📱 **CLI Options**: Command-line flags for quick setup
+
+## Quick Start
+
+### Installation
+
+**Recommended (via pipx):**
 ```bash
 pipx install git+https://github.com/svaldesoliva/hipodromo_python
 ```
-- From source — repo: [github.com/svaldesoliva/hipodromo_python](https://github.com/svaldesoliva/hipodromo_python)
+
+**From source:**
 ```bash
 git clone https://github.com/svaldesoliva/hipodromo_python.git
 cd hipodromo_python
 ./scripts/install.sh
 ```
-- Using pip — docs: [pip user installs](https://pip.pypa.io/en/stable/user_guide/#user-installs)
+
+**Using pip:**
 ```bash
 python3 -m pip install --user git+https://github.com/svaldesoliva/hipodromo_python
 ```
- 
 
-After installation, run:
+### Play Now!
+
 ```bash
 hipodromo
 ```
 
-#### Usage
-- You will see a main menu to play, change language, toggle fast mode, or show your balance.
-- Config file: `~/.config/hipodromo/config.json`
-- Example contents:
+## How to Play
+
+1. Run `hipodromo` in your terminal
+2. Pick a horse (1-5 by default)
+3. Bet some money
+4. Watch the race
+5. Win or lose money
+
+### Game Details
+
+- **Starting Money**: $5,000
+- **Odds**: Each horse has different odds (house keeps ~10%)
+- **Min Payout**: 1.5x your bet
+
+## Configuration
+
+Your settings are stored in `~/.config/hipodromo/config.json`:
+
 ```json
 {
   "balance": 7500,
@@ -45,102 +71,109 @@ hipodromo
   "seed": null
 }
 ```
-  - On first run, the app migrates legacy files if present: `~/.hipodromo_balance`, `~/.hipodromo_lang`, `~/.config/hipodromo/balance`, `~/.config/hipodromo/lang`.
 
-CLI options (optional):
+### CLI Options
+
 ```bash
-# Enable fast mode for this run
+# Enable fast mode for this session
 hipodromo --fast
 
 # Disable fast mode (overrides config)
 hipodromo --no-fast
 
-# Set number of horses (>=2) and an initial seed
+# Set number of horses and seed
 hipodromo --horses 7 --seed 12345
+
+# Show config file location
+hipodromo --config
+
+# Edit config file with your editor
+hipodromo -e
 ```
 
-#### Development
-- Editable install script:
+## Development
+
+### Setup Development Environment
+
 ```bash
 git clone https://github.com/svaldesoliva/hipodromo_python.git
 cd hipodromo_python
 ./scripts/install.sh dev
 ```
-- Or with pipx editable — see [pipx docs](https://pypa.github.io/pipx/docs/):
+
+Or with pipx:
 ```bash
 pipx install --force --editable .
 ```
 
-Repository: [github.com/svaldesoliva/hipodromo_python](https://github.com/svaldesoliva/hipodromo_python)
+### Project Structure
 
-</details>
-
-<details>
-<summary><strong>Español</strong></summary>
-
-#### Instalación
-- Con pipx (recomendado) — documentación: [pipx documentation](https://pypa.github.io/pipx/)
-```bash
-pipx install git+https://github.com/svaldesoliva/hipodromo_python
 ```
-- Desde el código fuente — repositorio: [github.com/svaldesoliva/hipodromo_python](https://github.com/svaldesoliva/hipodromo_python)
-```bash
-git clone https://github.com/svaldesoliva/hipodromo_python.git
-cd hipodromo_python
-./scripts/install.sh
-```
-- Con pip — docs: [pip user installs](https://pip.pypa.io/en/stable/user_guide/#user-installs)
-```bash
-python3 -m pip install --user git+https://github.com/svaldesoliva/hipodromo_python
-```
- 
-
-Después de instalar, ejecuta:
-```bash
-hipodromo
+hipodromo_python/
+├── Hipodromo.py      # Main game logic and CLI
+├── game.py           # Race animation and odds calculation
+├── config.py         # Configuration management
+├── i18n.py           # Internationalization
+├── utils.py          # Utility functions
+├── scripts/          # Installation scripts
+└── termcolor/        # Bundled terminal colors
 ```
 
-#### Uso
-- Verás un menú principal para jugar, cambiar el idioma, alternar modo rápido o mostrar tu saldo.
-- Archivo de configuración: `~/.config/hipodromo/config.json`
-- Ejemplo de contenido:
-```json
-{
-  "balance": 7500,
-  "lang": "es",
-  "fast": false,
-  "horses": 5,
-  "seed": null
-}
-```
-  - En la primera ejecución, la app migra archivos antiguos si existen: `~/.hipodromo_balance`, `~/.hipodromo_lang`, `~/.config/hipodromo/balance`, `~/.config/hipodromo/lang`.
+### Key Components
 
-Opciones CLI (opcionales):
-```bash
-# Activar modo rápido para esta sesión
-hipodromo --fast
+- **Race Engine**: Weighted random system for realistic horse performance
+- **Odds Calculator**: Fair odds with house edge for balanced gameplay
+- **Animation System**: Terminal-based race visualization
+- **Config Management**: JSON-based settings with legacy migration
+- **i18n System**: Simple but effective translation framework
 
-# Desactivar modo rápido (sobre-escribe la config)
-hipodromo --no-fast
+## How It Works
 
-# Establecer número de caballos (>=2) y una semilla inicial
-hipodromo --horses 7 --seed 12345
-```
+### Odds System
 
-#### Desarrollo
-- Instalación editable:
-```bash
-git clone https://github.com/svaldesoliva/hipodromo_python.git
-cd hipodromo_python
-./scripts/install.sh dev
-```
-- O con pipx editable — [documentación pipx](https://pypa.github.io/pipx/docs/):
-```bash
-pipx install --force --editable .
-```
+- Each horse gets a random weight (0.6-1.4)
+- Weights determine win probability
+- House keeps ~10% edge
+- Min payout is 1.5x
 
- </details>
+### Race Animation
 
-## License / Licencia
-MIT — see `LICENSE`.
+- Terminal animation with horse emojis
+- Horses move based on their weights
+- Fast mode skips the animation
+- Shows winner at the end
+
+### Languages
+
+- English and Spanish
+- Switch languages anytime
+- Saves your preference
+
+## Requirements
+
+- Python 3.8+
+- Terminal with Unicode support
+- Optional: `fzf` for enhanced menu selection
+
+## Contributing
+
+Feel free to contribute:
+
+1. Report bugs
+2. Suggest features
+3. Add translations
+4. Improve the code
+5. Submit pull requests
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+
+
+
+
+
+
+
 
