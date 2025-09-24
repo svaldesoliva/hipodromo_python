@@ -109,6 +109,7 @@ def animacion(n, cuser):
 
 
 def main():
+    global dinero
     while True:
         cprint(f"Hipódromo v0.2\n", "light_blue")
         cuser = input_entero(f"A cual le quieres apostar (1-{n}, 0 para salir): ", 0, n)
@@ -118,9 +119,6 @@ def main():
             break
         apuesta = input_entero(f"Tienes ${dinero}, cuánto quieres apostar?: ", 1, dinero)
 
-        dinero_local = apuesta  # placeholder to satisfy linter in nested scopes (not used)
-        # Actual balance updates use the outer-scope variable 'dinero'
-        global dinero
         dinero -= apuesta
         guardar_dinero(dinero)
         ganador = animacion(n, cuser)
