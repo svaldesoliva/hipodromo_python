@@ -1,6 +1,11 @@
 # Hippodrome (Horse Racing) in Python 🐎
 
-Simple terminal horse racing betting game with color output and a language selector (English/Español). Balance and language are persisted under `~/.config/hipodromo`.
+Simple terminal horse racing betting game with color output and a language selector (English/Español). Settings now use a single config file at `~/.config/hipodromo/config.json`.
+
+New in v0.3:
+- Odds per horse with fair-ish payouts (house edge ~10%).
+- Fast mode toggle and CLI flags.
+- Seeded runs and configurable number of horses.
 
 <details>
 <summary><strong>English</strong></summary>
@@ -28,9 +33,31 @@ hipodromo
 ```
 
 #### Usage
-- You will see a main menu to play, change language, or show your balance.
-- Balance file: `~/.config/hipodromo/balance`
-- Language file: `~/.config/hipodromo/lang`
+- You will see a main menu to play, change language, toggle fast mode, or show your balance.
+- Config file: `~/.config/hipodromo/config.json`
+- Example contents:
+```json
+{
+  "balance": 7500,
+  "lang": "en",
+  "fast": false,
+  "horses": 5,
+  "seed": null
+}
+```
+  - On first run, the app migrates legacy files if present: `~/.hipodromo_balance`, `~/.hipodromo_lang`, `~/.config/hipodromo/balance`, `~/.config/hipodromo/lang`.
+
+CLI options (optional):
+```bash
+# Enable fast mode for this run
+hipodromo --fast
+
+# Disable fast mode (overrides config)
+hipodromo --no-fast
+
+# Set number of horses (>=2) and an initial seed
+hipodromo --horses 7 --seed 12345
+```
 
 #### Development
 - Editable install script:
@@ -74,9 +101,31 @@ hipodromo
 ```
 
 #### Uso
-- Verás un menú principal para jugar, cambiar el idioma o mostrar tu saldo.
-- Archivo de saldo: `~/.config/hipodromo/balance`
-- Archivo de idioma: `~/.config/hipodromo/lang`
+- Verás un menú principal para jugar, cambiar el idioma, alternar modo rápido o mostrar tu saldo.
+- Archivo de configuración: `~/.config/hipodromo/config.json`
+- Ejemplo de contenido:
+```json
+{
+  "balance": 7500,
+  "lang": "es",
+  "fast": false,
+  "horses": 5,
+  "seed": null
+}
+```
+  - En la primera ejecución, la app migra archivos antiguos si existen: `~/.hipodromo_balance`, `~/.hipodromo_lang`, `~/.config/hipodromo/balance`, `~/.config/hipodromo/lang`.
+
+Opciones CLI (opcionales):
+```bash
+# Activar modo rápido para esta sesión
+hipodromo --fast
+
+# Desactivar modo rápido (sobre-escribe la config)
+hipodromo --no-fast
+
+# Establecer número de caballos (>=2) y una semilla inicial
+hipodromo --horses 7 --seed 12345
+```
 
 #### Desarrollo
 - Instalación editable:
