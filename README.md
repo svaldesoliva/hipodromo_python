@@ -48,12 +48,4 @@ cd hipodromo_python
 pipx install --force --editable .
 ```
 
-## Paquetes Homebrew / AUR
-- Homebrew: edita `packaging/homebrew/hipodromo.rb`, reemplaza `sha256` con el del tarball y publícalo en tu tap (`brew tap <user>/tap` y `brew install --build-from-source <user>/tap/hipodromo`).
-- AUR: edita `packaging/aur/PKGBUILD`, actualiza `pkgver` y sube al AUR. Usuarios pueden instalar con `yay -S hipodromo`.
-
-Repositorio: https://github.com/svaldesoliva/hipodromo_python
-
-## Licencia
-MIT. Ver `LICENSE`.
 
