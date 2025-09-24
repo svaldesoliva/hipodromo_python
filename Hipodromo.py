@@ -1,18 +1,31 @@
 import os
 import time
+import argparse
 try:
     from termcolor import cprint
 except Exception:
     import sys as _sys
     _sys.path.append(os.path.join(os.path.dirname(__file__), "termcolor", "src"))
     from termcolor.termcolor import cprint
-from config import get_balance, set_balance, get_lang, set_lang
+from config import (
+    get_balance,
+    set_balance,
+    get_lang,
+    set_lang,
+    get_fast,
+    set_fast,
+    get_horses,
+    set_horses,
+    get_seed,
+    set_seed,
+    CONFIG_FILE,
+)
 from i18n import TRANSLATIONS, translator
 from utils import clear_screen, input_entero, fzf_available, fzf_select
-from game import animacion
+from game import animacion, build_race, compute_decimal_odds
 
 
-N_HORSES = 5
+N_HORSES = get_horses(5)
 
 
 def cargar_idioma():
@@ -79,16 +92,33 @@ def guardar_dinero(valor):
 
 
 dinero = cargar_dinero()
+FAST_MODE = get_fast(False)
+SEED = get_seed(None)
 
 
 def animar_carrera(n, cuser):
-    return animacion(n, cuser, t)
+    race = build_race(n, SEED)
+    return animacion(n, cuser, t, race_profile=race, fast=FAST_MODE)
 
 
 def jugar():
     global dinero
+    global N_HORSES
+    # Build race upfront to show odds
+    race = build_race(N_HORSES, SEED)
+    odds = compute_decimal_odds(race["weights"]) if "weights" in race else []
     while True:
         cprint(t("title"), "light_blue")
+        try:
+            # Show odds
+            print(t("odds_header"))
+            for i in range(N_HORSES):
+                name = t("horse_name", idx=i + 1)
+                odd = odds[i] if i < len(odds) else 2.0
+                print(t("odds_line", idx=i + 1, name=name, odds=odd))
+            print()
+        except Exception:
+            pass
         cuser = input_entero(
             t("bet_prompt", n=N_HORSES),
             0,
@@ -111,12 +141,16 @@ def jugar():
 
         dinero -= apuesta
         guardar_dinero(dinero)
-        ganador = animar_carrera(N_HORSES, cuser)
+        # Use the prepared race for consistency with shown odds
+        ganador = animacion(N_HORSES, cuser, t, race_profile=race, fast=FAST_MODE)
         if cuser == ganador:
-            dinero += apuesta * 2
+            # Decimal odds payout: stake * (odds - 1) + stake = stake * odds
+            odd = odds[cuser - 1] if cuser - 1 < len(odds) else 2.0
+            ganancia = int(round(apuesta * odd))
+            dinero += ganancia
             guardar_dinero(dinero)
             cprint(
-                t("you_win", ganancia=apuesta * 2, dinero=dinero),
+                t("you_win", ganancia=ganancia, dinero=dinero),
                 "light_green",
             )
             input(t("press_enter_continue"))
@@ -168,6 +202,14 @@ def cambiar_idioma():
         pass
 
 
+def toggle_fast():
+    global FAST_MODE
+    FAST_MODE = not FAST_MODE
+    set_fast(FAST_MODE)
+    cprint(t("fast_on") if FAST_MODE else t("fast_off"), "light_blue")
+    input(t("press_enter_continue"))
+
+
 def mostrar_saldo():
     cprint(t("current_balance", dinero=dinero), "light_blue")
     input(t("press_enter_continue"))
@@ -175,6 +217,56 @@ def mostrar_saldo():
 
 def main():
     global dinero
+    global N_HORSES
+    global FAST_MODE
+    global SEED
+
+    # CLI flags
+    try:
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument("--fast", action="store_true")
+        parser.add_argument("--no-fast", action="store_true")
+        parser.add_argument("--horses", type=int)
+        parser.add_argument("--seed")
+        parser.add_argument("--config", action="store_true")
+        parser.add_argument("-e", dest="edit_config", action="store_true")
+        args, _ = parser.parse_known_args()
+
+        if args.fast and not args.no_fast:
+            FAST_MODE = True
+        if args.no_fast:
+            FAST_MODE = False
+        if args.horses and args.horses >= 2:
+            N_HORSES = args.horses
+            set_horses(N_HORSES)
+        if args.seed is not None:
+            # Accept int or any string; keep as provided
+            try:
+                SEED = int(args.seed)
+            except Exception:
+                SEED = str(args.seed)
+            set_seed(SEED)
+        # Handle config inspection/editing
+        if getattr(args, "config", False):
+            print(CONFIG_FILE)
+            return
+        if getattr(args, "edit_config", False):
+            try:
+                import shutil
+                import subprocess
+                editor = "nvim" if shutil.which("nvim") else ("vi" if shutil.which("vi") else None)
+                if editor is None:
+                    print(CONFIG_FILE)
+                    return
+                subprocess.call([editor, CONFIG_FILE])
+            except Exception:
+                print(CONFIG_FILE)
+            return
+
+        # Persist fast preference on startup change
+        set_fast(FAST_MODE)
+    except Exception:
+        pass
     while True:
         clear_screen()
         cprint(t("title"), "light_blue")
@@ -183,6 +275,7 @@ def main():
                 t("menu_play"),
                 t("menu_change_lang"),
                 t("menu_show_balance"),
+                t("menu_toggle_fast"),
                 t("menu_exit"),
             ]
             choice = fzf_select(menu_options, t("menu_header"))
@@ -197,6 +290,8 @@ def main():
                 opcion = 2
             elif choice == t("menu_show_balance"):
                 opcion = 3
+            elif choice == t("menu_toggle_fast"):
+                opcion = 4
             elif choice == t("menu_exit"):
                 opcion = 0
             else:
@@ -206,8 +301,9 @@ def main():
             print(t("menu_play"))
             print(t("menu_change_lang"))
             print(t("menu_show_balance"))
+            print(t("menu_toggle_fast"))
             print(t("menu_exit"))
-            opcion = input_entero(t("menu_prompt"), 0, 3, invalid_msg=t("invalid_int"))
+            opcion = input_entero(t("menu_prompt"), 0, 4, invalid_msg=t("invalid_int"))
         if opcion == 0:
             cprint(t("thanks"), "light_blue")
             guardar_dinero(dinero)
@@ -218,6 +314,8 @@ def main():
             cambiar_idioma()
         elif opcion == 3:
             mostrar_saldo()
+        elif opcion == 4:
+            toggle_fast()
         else:
             print(t("invalid_option"))
             time.sleep(1)

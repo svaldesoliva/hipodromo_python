@@ -2,7 +2,7 @@ from typing import Dict
 
 TRANSLATIONS: Dict[str, Dict[str, str]] = {
     "es": {
-        "title": "Hipódromo v0.2\n",
+        "title": "Hipódromo v0.3\n",
         "menu_header": "Menú principal",
         "menu_play": "1) Jugar",
         "menu_change_lang": "2) Cambiar idioma",
@@ -28,9 +28,15 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "press_enter_continue_alt": "Ingresa enter para seguir jugando...",
         "out_of_money": "Te quedaste sin dinero, sal de mi hipódromo pobre de mi*rda. Presiona enter para salir...",
         "language_prompt": "Selecciona idioma / Select language: 1) Español  2) English: ",
+        "odds_header": "Cuotas (x): ",
+        "odds_line": "{idx}) {name}: {odds}x",
+        "fast_on": "Modo rápido activado.",
+        "fast_off": "Modo rápido desactivado.",
+        "set_horses": "Número de caballos establecido a {n}.",
+        "menu_toggle_fast": "4) Alternar modo rápido",
     },
     "en": {
-        "title": "Hippodrome v0.2\n",
+        "title": "Hippodrome v0.3\n",
         "menu_header": "Main menu",
         "menu_play": "1) Play",
         "menu_change_lang": "2) Change language",
@@ -56,6 +62,12 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         "press_enter_continue_alt": "Press enter to keep playing...",
         "out_of_money": "You ran out of money you f*cking loser. Press enter to exit...",
         "language_prompt": "Select language / Selecciona idioma: 1) English  2) Español: ",
+        "odds_header": "Odds (x): ",
+        "odds_line": "{idx}) {name}: {odds}x",
+        "fast_on": "Fast mode enabled.",
+        "fast_off": "Fast mode disabled.",
+        "set_horses": "Number of horses set to {n}.",
+        "menu_toggle_fast": "4) Toggle fast mode",
     },
 }
 
@@ -67,3 +79,5 @@ def translator(lang: str):
             return text.format(**kwargs)
         return text
     return t
+
+

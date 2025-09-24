@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hipodromo"
-version = "0.2.1"
+version = "0.3.0"
 description = "Juego de hipódromo en terminal con apuestas"
 readme = "README.md"
 authors = [{ name = "Simón Valdés" }]

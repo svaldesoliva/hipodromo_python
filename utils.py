@@ -1,4 +1,6 @@
 import os
+import shutil
+import subprocess
 
 
 def clear_screen():
@@ -8,55 +10,45 @@ def clear_screen():
         os.system("clear")
 
 
-def input_entero(prompt, minimo=None, maximo=None, invalid_msg="Entrada inválida.", min_msg=None, max_msg=None):
+def input_entero(prompt, minimo=None, maximo=None, invalid_msg=None, min_msg=None, max_msg=None):
     while True:
         try:
             valor_str = input(prompt)
             valor = int(valor_str)
             if minimo is not None and valor < minimo:
-                print(min_msg or f"Ingresa un número >= {minimo}.")
+                if min_msg:
+                    print(min_msg)
                 continue
             if maximo is not None and valor > maximo:
-                print(max_msg or f"Ingresa un número <= {maximo}.")
+                if max_msg:
+                    print(max_msg)
                 continue
             return valor
         except ValueError:
-            print(invalid_msg)
-
-
-# Optional fzf integration
-_def_checked = False
-_has_fzf = False
+            if invalid_msg:
+                print(invalid_msg)
 
 
 def fzf_available():
-    global _def_checked, _has_fzf
-    if not _def_checked:
-        _has_fzf = os.system("command -v fzf >/dev/null 2>&1") == 0
-        _def_checked = True
-    return _has_fzf
+    return shutil.which("fzf") is not None
 
 
-def fzf_select(options, header=None):
-    if not fzf_available():
+def fzf_select(options, prompt):
+    """Return the selected option string via fzf, or None if canceled/error."""
+    if not options:
         return None
     try:
-        import subprocess
-
-        input_str = "\n".join(options)
-        env = os.environ.copy()
-        if header:
-            env["FZF_DEFAULT_OPTS"] = (env.get("FZF_DEFAULT_OPTS", "") + f" --header='{header}'").strip()
-        proc = subprocess.Popen(
-            ["fzf", "--ansi"],
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
+        proc = subprocess.run(
+            ["fzf", "--prompt", f"{prompt} "],
+            input="\n".join(options),
+            capture_output=True,
             text=True,
-            env=env,
+            check=False,
         )
-        out, _ = proc.communicate(input=input_str)
-        out = out.strip()
-        return out if out else None
+        if proc.returncode == 0:
+            return proc.stdout.strip()
     except Exception:
         return None
+    return None
+
+

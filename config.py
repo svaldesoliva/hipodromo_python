@@ -64,6 +64,14 @@ def _ensure_and_migrate_config():
         legacy_lang = _read_legacy_value(OLD_LANG_FILE) or legacy_lang
         config["lang"] = legacy_lang if legacy_lang in ("en", "es") else None
 
+    # New settings with sensible defaults
+    if "fast" not in config:
+        config["fast"] = False
+    if "horses" not in config:
+        config["horses"] = 5
+    if "seed" not in config:
+        config["seed"] = None
+
     _write_config_to_disk(config)
     return config
 
@@ -94,3 +102,42 @@ def set_balance(value):
         _write_config_to_disk(CONFIG)
     except Exception:
         pass
+
+
+def get_fast(default=False):
+    try:
+        return bool(CONFIG.get("fast", default))
+    except Exception:
+        return default
+
+
+def set_fast(value: bool):
+    CONFIG["fast"] = bool(value)
+    _write_config_to_disk(CONFIG)
+
+
+def get_horses(default=5):
+    try:
+        n = int(CONFIG.get("horses", default))
+        return n if n >= 2 else default
+    except Exception:
+        return default
+
+
+def set_horses(value: int):
+    try:
+        CONFIG["horses"] = int(value)
+        _write_config_to_disk(CONFIG)
+    except Exception:
+        pass
+
+
+def get_seed(default=None):
+    return CONFIG.get("seed", default)
+
+
+def set_seed(value):
+    CONFIG["seed"] = value
+    _write_config_to_disk(CONFIG)
+
+
