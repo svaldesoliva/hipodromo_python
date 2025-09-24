@@ -18,6 +18,7 @@ from config import (
     set_horses,
     get_seed,
     set_seed,
+    CONFIG_FILE,
 )
 from i18n import TRANSLATIONS, translator
 from utils import clear_screen, input_entero, fzf_available, fzf_select
@@ -227,6 +228,8 @@ def main():
         parser.add_argument("--no-fast", action="store_true")
         parser.add_argument("--horses", type=int)
         parser.add_argument("--seed")
+        parser.add_argument("--config", action="store_true")
+        parser.add_argument("-e", dest="edit_config", action="store_true")
         args, _ = parser.parse_known_args()
 
         if args.fast and not args.no_fast:
@@ -243,6 +246,23 @@ def main():
             except Exception:
                 SEED = str(args.seed)
             set_seed(SEED)
+        # Handle config inspection/editing
+        if getattr(args, "config", False):
+            print(CONFIG_FILE)
+            return
+        if getattr(args, "edit_config", False):
+            try:
+                import shutil
+                import subprocess
+                editor = "nvim" if shutil.which("nvim") else ("vi" if shutil.which("vi") else None)
+                if editor is None:
+                    print(CONFIG_FILE)
+                    return
+                subprocess.call([editor, CONFIG_FILE])
+            except Exception:
+                print(CONFIG_FILE)
+            return
+
         # Persist fast preference on startup change
         set_fast(FAST_MODE)
     except Exception:
