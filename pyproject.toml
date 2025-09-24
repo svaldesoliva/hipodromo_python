@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hipodromo"
+version = "0.2.0"
+description = "Juego de hipódromo en terminal con apuestas"
+readme = "README.md"
+authors = [{ name = "Simón Valdés" }]
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+keywords = ["game", "terminal", "hipodromo", "horses", "bets", "cli"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Environment :: Console",
+  "Intended Audience :: End Users/Desktop",
+  "Topic :: Games/Entertainment",
+]
+dependencies = [
+  "termcolor>=2.4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/svaldesoliva/hipodromo_python"
+
+[project.scripts]
+hipodromo = "Hipodromo:main"
+
+[tool.setuptools]
+py-modules = ["Hipodromo"]
