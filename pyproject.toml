@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hipodromo"
-version = "0.2.0"
+version = "0.2.1"
 description = "Juego de hipódromo en terminal con apuestas"
 readme = "README.md"
 authors = [{ name = "Simón Valdés" }]
@@ -29,4 +29,4 @@ Homepage = "https://github.com/svaldesoliva/hipodromo_python"
 hipodromo = "Hipodromo:main"
 
 [tool.setuptools]
-py-modules = ["Hipodromo"]
+py-modules = ["Hipodromo", "config", "i18n", "utils", "game"]
